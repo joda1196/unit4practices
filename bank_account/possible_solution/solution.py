@@ -17,4 +17,4 @@ class BankAccount:
             self.balance -= amount
 
     def getBalance(self):
-        return "${;,.2f}".format(self.balance)
+        return "${:,.2f}".format(self.balance)
