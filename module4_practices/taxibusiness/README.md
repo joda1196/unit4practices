@@ -9,6 +9,7 @@ In this practice you need to accomplish the following:
 - [ ] 'Fare' a float stating the cost per mile for travel for that taxi.
 - [ ] 'Taxi-Type' a string detailing the type of taxi (Van, Car, Bus).
 - [ ] 'Taxi-Number' an integer stating the taxi number. This should start at 111 and increase by 11 each other instance of the taxi.
+- [ ] 'Notes' an optional string field for any extra notations.
 
 3. You should have the following functions capable in your model:
 
