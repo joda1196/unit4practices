@@ -27,7 +27,7 @@ class TaxiBusiness(models.Model):
         top = cls.objects.all().last()
         if top != None:
             taxi.taxi_number = top.taxi_number + 11
-        cls.save(taxi)
+        taxi.save()
         return taxi
 
     @classmethod

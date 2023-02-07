@@ -1,92 +1,98 @@
 from django.db import models
-from datetime import datetime
+from datetime import date
 
 
 class LeaveRequest(models.Model):
-    date_requested = models.DateTimeField(default=datetime.today(), blank=True)
+    date_requested = models.DateField(blank=True)
     employee_name = models.TextField()
-    is_sick = models.BooleanField()
-    is_personal = models.BooleanField()
-    is_paid = models.BooleanField()
-    is_approved = models.BooleanField(default=False, blank=True)
-    approved_by = models.TextField(blank=True)
-    notes = models.TextField(blank=True)
+    is_sick = models.BooleanField(default=False)
+    is_personal = models.BooleanField(default=False)
+    is_paid = models.BooleanField(default=False)
+    is_approved = models.BooleanField(default=False)
+    approved_by = models.TextField(max_length=100)
+    notes = models.TextField(blank=True, null=True)
 
-    @classmethod
-    def create_leaverequest(
-        cls,
-        date_requested,
-        employee_name,
-        is_sick,
-        is_personal,
-        is_paid,
-        is_approved,
-        approved_by,
-        notes,
-    ):
-        cls.objects.create(
-            employee_name=employee_name,
-            is_sick=is_sick,
-            is_personal=is_personal,
-            is_paid=is_paid,
-        )
 
-    @classmethod
-    def approve_request(cls, employee_name):
-        request = cls.objects.get(employee_name=employee_name)
-        request.is_approved = True
-        request.save()
+def create_leaverequest(
+    employee_name,
+    is_sick,
+    is_personal,
+    is_paid,
+    is_approved,
+    approved_by,
+    notes=None,
+    date_requested=date.today(),
+):
+    request = LeaveRequest(
+        employee_name=employee_name,
+        is_sick=is_sick,
+        is_personal=is_personal,
+        is_paid=is_paid,
+        is_approved=is_approved,
+        approved_by=approved_by,
+        notes=notes,
+        date_requested=date_requested,
+    )
+    request.save()
+    return request
 
-    @classmethod
-    def sort_by_date(cls):
-        return cls.objects.filter(is_approved=False)
+    # LeaveRequest.objects.create(
+    #     employee_name=employee_name,
+    #     is_sick=is_sick,
+    #     is_personal=is_personal,
+    #     is_paid=is_paid,
+    #     is_approved=is_approved,
+    #     approved_by=approved_by,
+    #     notes=notes,
+    #     date_requested=date_requested,
+    # )
 
-    @classmethod
-    def sort_by_sick(cls):
-        return cls.objects.filter(is_sick=True)
 
-    @classmethod
-    def sort_by_approved(cls):
-        return cls.objects.filter(is_approved=True)
+def approve_request(employee_name):
+    request = LeaveRequest.objects.get(employee_name=employee_name)
+    request.is_approved = True
+    request.save()
+    return request
 
-    @classmethod
-    def sort_by_paid(cls):
-        return cls.objects.filter(is_paid=True)
 
-    @classmethod
-    def sort_by_personal(cls):
-        return cls.objects.filter(is_personal=True)
+def sort_by_date(date_requested):
+    return LeaveRequest.objects.filter(date_requested=date_requested)
 
-    # @classmethod
-    # def sort_by_employee(cls):
-    #     if
 
-    @classmethod
-    def goodbye_request(cls, employee_name):
-        return cls.objects.filter(employee_name).delete()
+def sort_by_sick():
+    return LeaveRequest.objects.filter(is_sick=True)
 
-    def update_expense(
-        self,
-        date_requested,
-        employee_name,
-        is_sick,
-        is_personal,
-        is_paid,
-        approved_by,
-        notes,
-    ):
-        if date_requested:
-            self.date_requested = date_requested
-        if employee_name:
-            self.employee_name = employee_name
-        if is_sick:
-            self.is_sick = is_sick
-        if is_personal:
-            self.is_personal = is_personal
-        if is_paid:
-            self.is_paid = is_paid
-        if approved_by:
-            self.approved_by = approved_by
-        if notes:
-            self.notes = notes
-        self.save()
+
+def sort_by_approved():
+    return LeaveRequest.objects.filter(is_approved=True)
+
+
+def sort_by_paid():
+    return LeaveRequest.objects.filter(is_paid=True)
+
+
+def sort_by_personal():
+    return LeaveRequest.objects.filter(is_personal=True)
+
+
+def sort_by_employee(name, sort_type):
+    LeaveRequest.objects.get(employee_name=name)
+
+
+def goodbye_request(name):
+    LeaveRequest.objects.get(employee_name=name).delete()
+
+
+def update_request(employee_name, sort_type, content):
+    request = LeaveRequest.objects.get(employee_name=employee_name)
+    if sort_type == "name":
+        request.employee_name = content
+    elif sort_type == "date":
+        request.date_requested = content
+    elif sort_type == "sick":
+        request.is_sick = content
+    elif sort_type == "paid":
+        request.is_paid = content
+    elif sort_type == "personal":
+        request.is_personal = content
+    request.save()
