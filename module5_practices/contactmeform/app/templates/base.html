@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <title>Contact Me</title>
+</head>
+<body>
+    <form action="{% url 'contact' %}" method="GET">
+        <label>
+          <p>First Name:</p>
+          <input type="text" name="first_name" required />
+        </label>
+        <label>
+          <p>Last Name:</p>
+          <input type="text" name="last_name" required />
+        </label>
+        <label>
+          <p>Email</p>
+          <input type="email" name="email" required />
+        </label>
+        <label>
+          <p>Message</p>
+          <input type="text" name="message" required />
+        </label>
+        <button>Contact Me</button>
+      </form>
+    {% if first_name is not None %}
+    <h2>Your message has been sent!</h2>
+    {% endif %}
+</body>
+</html>
